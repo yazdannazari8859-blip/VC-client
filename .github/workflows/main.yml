@@ -1,0 +1,36 @@
+
+name: Build VCClient
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Java 8
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '8'
+
+      - name: Build VCClient
+        run: |
+          unzip -o VCClient-1.1-Navigation-Source-FIXED.zip -d source
+          cd source
+          gradle wrapper --gradle-version 2.14.1
+          ./gradlew build --stacktrace
+
+      - name: Upload JAR
+        uses: actions/upload-artifact@v4
+        with:
+          name: VCClient-fixed
+          path: source/**/build/libs/*.jar
+          if-no-files-found: error
