@@ -15,16 +15,19 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set up Java 8
+      - name: Set up Java 17
         uses: actions/setup-java@v4
         with:
           distribution: temurin
-          java-version: '8'
+          java-version: '17'
 
-      - name: Build VCClient
+      - name: Extract source
         run: |
           unzip -o VCClient-1.1-Navigation-Source-FIXED.zip -d source
-          cd source
+
+      - name: Build VCClient
+        working-directory: source
+        run: |
           gradle wrapper --gradle-version 2.14.1
           ./gradlew build --stacktrace
 
@@ -34,3 +37,4 @@ jobs:
           name: VCClient-fixed
           path: source/**/build/libs/*.jar
           if-no-files-found: error
+          
